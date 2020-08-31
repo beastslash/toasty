@@ -1,0 +1,19 @@
+{
+  "name": "toasty",
+  "version": "1.0.0",
+  "description": "A Discord bot for managing messages across servers.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "eris": "^0.13.3",
+    "express": "^4.17.1",
+    "mssql": "^6.2.0",
+    "node-cache": "^5.1.2",
+    "node-fetch": "^2.6.0"
+  },
+  "engines": {
+    "node": "12.x"
+  }
+}
