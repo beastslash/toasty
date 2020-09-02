@@ -50,7 +50,8 @@ new Commands.new("logs", ["log"], async (bot, args, msg) => {
     return;
   };
   
-  const AuthorPing = "<@" + msg.author.id + ">";
+  const AuthorId = msg.author.id;
+  const AuthorPing = "<@" + AuthorId + ">";
   const GuildId = msg.channel.guild.id;
   var guildConfig = await getGuildConfig(GuildId);
   
@@ -110,10 +111,13 @@ new Commands.new("logs", ["log"], async (bot, args, msg) => {
       
       // Update cache
       guildConfig.loggingEnabled = !LoggingEnabled;
-      GuildCache.set(GuildId, guildConfig)
+      GuildCache.set(GuildId, guildConfig);
+
+      // Set cooldown
+      this.applyCooldown(AuthorId, 5000);
       
       // Success.
-      msg.channel.createMessage(AuthorPing + " Logging systems " + (LoggingEnabled ? "offline" : "online") + ". 😎")
+      msg.channel.createMessage(AuthorPing + " Logging systems " + (LoggingEnabled ? "offline" : "online") + ". 😎");
       break;
     
     case "set":
@@ -152,6 +156,9 @@ new Commands.new("logs", ["log"], async (bot, args, msg) => {
       guildConfig.logChannelIds = LogChannelsString;
       GuildCache.set(GuildId, guildConfig);
       
+      // Set cooldown
+      this.applyCooldown(AuthorId, 5000);
+      
       // Tell the user
       for (var i = 0; LogChannels.length > i; i++) {
         LogChannels[i] = (LogChannels.length > 1 ? (i === 0 ? "" : ", " + (i + 1 === LogChannels.length ? "and " : "")) : "") + "<#" + LogChannels[i] + ">";
@@ -169,4 +176,4 @@ new Commands.new("logs", ["log"], async (bot, args, msg) => {
       break;
   };
   
-});
+}, 3000);
