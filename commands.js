@@ -3,13 +3,41 @@ const DefaultPrefix = ";";
 var commands = {};
 var bot;
 
+var cooledUsers = {};
+
 class Command {
   
   execute(args, msg) {
+
+    // Check if the user is under cooldown
+    const AuthorId = msg.author.id;
+    const ExecuteTime = new Date().getTime();
+    const RemainingCooldown = cooledUsers[AuthorId] ? (cooledUsers[AuthorId][this.name] + this.cooldown) - ExecuteTime : 0
+    if (cooledUsers[AuthorId] && RemainingCooldown > 0) {
+      msg.channel.createMessage("<@" + AuthorId + "> You're moving too fast...even for me! Give me " + RemainingCooldown / 1000 + " more seconds.");
+      return;
+    };
+
+    // Put the user under cooldown
+    this.applyCooldown(AuthorId);
+
+    // Execute the command
     this.action(bot, args, msg);
+
   };
+
+  applyCooldown(userId, milliseconds) {
+
+    const ExecuteTime = new Date().getTime();
+
+    if (!cooledUsers[userId]) {
+      cooledUsers[userId] = {};
+    };
+
+    cooledUsers[userId][this.name] = milliseconds ? ExecuteTime + milliseconds : ExecuteTime;
+  }
   
-  constructor(name, aliases, action) {
+  constructor(name, aliases, action, cooldown) {
     
     // Check if the command already exists
     if (commands[name]) {
@@ -21,9 +49,10 @@ class Command {
     };
     
     // Create the command
-    this.aliases = aliases;
+    this.aliases = aliases || [];
     this.action = action;
-    
+    this.cooldown = cooldown || 0;
+
     commands[name] = this;
     
   };

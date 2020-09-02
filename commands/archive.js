@@ -46,6 +46,7 @@ async function getGuildConfig(guildId) {
 new Command.new("archive", ["log"], async (bot, args, msg) => {
 
   const GuildId = msg.channel.guild.id;
+  const AuthorId = msg.author.id;
   var guildConfig = await getGuildConfig(GuildId);
 
   if (args && args.toLowerCase().substring(0, 11) === "set --guild") {
@@ -75,7 +76,7 @@ new Command.new("archive", ["log"], async (bot, args, msg) => {
     
     if (!bot.guilds.find(botIsInGuild)) {
       msg.channel.createMessage({
-        content: "<@" + msg.author.id + "> Either guild " + ArchiveGuildId + " doesn't exist, or I just wasn't invited to the party. :("
+        content: "<@" + AuthorId + "> Either guild " + ArchiveGuildId + " doesn't exist, or I just wasn't invited to the party. :("
       });
 
       return;
@@ -94,8 +95,11 @@ new Command.new("archive", ["log"], async (bot, args, msg) => {
     GuildCache.set(GuildId, guildConfig);
 
     // Tell them we're finished
-    msg.channel.createMessage("<@" + msg.author.id + "> Updated default archive guild ID to `" + ArchiveGuildId + "`!");
+    msg.channel.createMessage("<@" + AuthorId + "> Updated default archive guild ID to `" + ArchiveGuildId + "`!");
 
+    // Set the cooldown
+    this.applyCooldown(AuthorId, 5000)
+    
     return;
 
   };
@@ -115,14 +119,14 @@ new Command.new("archive", ["log"], async (bot, args, msg) => {
   
   if (!bot.guilds.find(botIsInGuild)) {
     msg.channel.createMessage({
-      content: "<@" + msg.author.id + "> I don't have access to Guild " + ArchiveGuildId + "! Please invite me to the guild, or set a new guild ID."
+      content: "<@" + AuthorId + "> I don't have access to Guild " + ArchiveGuildId + "! Please invite me to the guild, or set a new guild ID."
     });
 
     return;
   };
 
   // Tell the user that this may take a long time
-  await msg.channel.createMessage("<@"+msg.author.id+"> Getting **all** messages in this channel before this one I just sent. This may take a long time if there are a lot of messages. Please wait!");
+  await msg.channel.createMessage("<@"+ AuthorId +"> Getting **all** messages in this channel before this one I just sent. This may take a long time if there are a lot of messages. Please wait!");
 
   var lastMessageId = msg.id;
   var messages = [];
@@ -260,12 +264,15 @@ new Command.new("archive", ["log"], async (bot, args, msg) => {
       await bot.deleteWebhook(webhook.id, undefined, "Cleaning up archive webhook");
       
       // Tell them we're finished!
-      await msg.channel.createMessage("<@"+msg.author.id+"> Finished! All of your messages can be found in <#" + archiveChannel.id + ">.");
+      await msg.channel.createMessage("<@" + AuthorId + "> Finished! All of your messages can be found in <#" + archiveChannel.id + ">.");
       
+      // Set the cooldown
+      this.applyCooldown(AuthorId, 10000);
+
     };
 
   };
 
   keepGoing();
 
-});
+}, 3000);
