@@ -30,8 +30,9 @@ Bot.on("messageCreate", (msg) => {
   const ServerPrefix = Commands.getPrefix(msg.channel.id);
   
   // Check if they just want the bot prefix
+  const AuthorPing = "<@" + msg.author.id + ">";
   if (msg.content === "<@" + Bot.user.id + ">" || msg.content === "<@!" + Bot.user.id + ">") {
-    msg.channel.createMessage("<@" + msg.author.id + "> My prefix is **`" + ServerPrefix + "`**!");
+    msg.channel.createMessage(AuthorPing + " My prefix is **`" + ServerPrefix + "`**!");
     return;
   };
 
@@ -47,7 +48,19 @@ Bot.on("messageCreate", (msg) => {
       const Command = Commands.get(commandName);
       Command ? Command.execute(args, msg) : undefined;
     } catch (err) {
-      console.log(err);
+      msg.channel.createMessage({
+        content: AuthorPing + " Something bad happened! Please try again.",
+        embed: {
+          description: "Please [submit this report to Makuwro](https://github.com/makuwro/toasty/issues) if this continues. \nThink you can help us fix this? [Shoot a pull request](https://github.com/makuwro/toasty/pulls) our way!",
+          fields: [{
+            name: "Error",
+            value: err.name + ": " + err.message
+          }, {
+            name: "Stack",
+            value: err.stack
+          }]
+        }
+      })
     };
     
   };
