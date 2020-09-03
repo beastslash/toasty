@@ -1,4 +1,4 @@
-const DefaultPrefix = ";";
+const DefaultPrefix = ":";
 
 var commands = {};
 var bot;
@@ -7,6 +7,8 @@ var cooledUsers = {};
 
 class Command {
   
+  e = 1;
+
   execute(args, msg) {
 
     // Check if the user is under cooldown
@@ -35,26 +37,29 @@ class Command {
     };
 
     cooledUsers[userId][this.name] = milliseconds ? ExecuteTime + milliseconds : ExecuteTime;
-  }
+  };
+
+  setAction(action) {
+    this.action = action;
+  };
   
-  constructor(name, aliases, action, cooldown) {
+  constructor(name, aliases, category, action, cooldown) {
     
     // Check if the command already exists
     if (commands[name]) {
       throw "Command " + name + " already exists";
     };
-  
-    if (typeof(action) !== "function") {
-      throw "Action is not a function";
-    };
     
     // Create the command
+    this.category = category;
     this.aliases = aliases || [];
     this.action = action;
-    this.cooldown = cooldown || 0;
+    this.cooldown = cooldown === false ? 0 : cooldown || 0;
 
     commands[name] = this;
     
+    return commands[name];
+
   };
 };
 
