@@ -29,6 +29,12 @@ Bot.on("messageCreate", (msg) => {
   
   const ServerPrefix = Commands.getPrefix(msg.channel.id);
   
+  // Check if they just want the bot prefix
+  if (msg.content === "<@" + Bot.user.id + ">" || msg.content === "<@!" + Bot.user.id + ">") {
+    msg.channel.createMessage("<@" + msg.author.id + "> My prefix is **`" + ServerPrefix + "`**!");
+    return;
+  };
+
   if (msg.content.substring(0, ServerPrefix.length) === ServerPrefix) {
     if (msg.content.indexOf(" ") != -1) {
       var commandName = msg.content.substring(1, msg.content.indexOf(" "));
@@ -39,8 +45,7 @@ Bot.on("messageCreate", (msg) => {
 
     try {
       const Command = Commands.get(commandName);
-      
-      Command.execute(args, msg);
+      Command ? Command.execute(args, msg) : undefined;
     } catch (err) {
       console.log(err);
     };
