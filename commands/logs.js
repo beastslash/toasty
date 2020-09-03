@@ -42,8 +42,9 @@ async function getGuildConfig(guildId) {
   
 };
 
-new Commands.new("logs", ["log"], async (bot, args, msg) => {
-  
+var command;
+command = new Commands.new("logs", ["log"], "logging", async (bot, args, msg) => {
+
   // Check permissions
   if (!msg.member.permission.has("manageGuild")) {
     msg.channel.createMessage(AuthorPing + " You don't have permission to manage logs.");
@@ -114,7 +115,7 @@ new Commands.new("logs", ["log"], async (bot, args, msg) => {
       GuildCache.set(GuildId, guildConfig);
 
       // Set cooldown
-      this.applyCooldown(AuthorId, 5000);
+      command.applyCooldown(AuthorId, 5000);
       
       // Success.
       msg.channel.createMessage(AuthorPing + " Logging systems " + (LoggingEnabled ? "offline" : "online") + ". 😎");
@@ -157,7 +158,7 @@ new Commands.new("logs", ["log"], async (bot, args, msg) => {
       GuildCache.set(GuildId, guildConfig);
       
       // Set cooldown
-      this.applyCooldown(AuthorId, 5000);
+      command.applyCooldown(AuthorId, 5000);
       
       // Tell the user
       for (var i = 0; LogChannels.length > i; i++) {

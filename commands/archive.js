@@ -43,7 +43,7 @@ async function getGuildConfig(guildId) {
   
 };
 
-new Command.new("archive", ["log"], async (bot, args, msg) => {
+new Command.new("archive", ["archives"], "archive", async (bot, args, msg) => {
 
   const GuildId = msg.channel.guild.id;
   const AuthorId = msg.author.id;

@@ -47,6 +47,11 @@ module.exports = function(bot) {
     const LogChannelsString = GuildConfig.logChannelIds === "" ? "[]" : GuildConfig.logChannelIds;
     const LogChannels = JSON.parse(LogChannelsString);
     
+    if (!LogChannels || LogChannels.length === 0) {
+      console.log("Guild " + msg.channel.guild.id + " doesn't have a log channel.")
+      return;
+    };
+
     for (var i = 0; LogChannels.length > i; i++) {
       
       const LogChannel = bot.getChannel(LogChannels[i]);
