@@ -82,7 +82,7 @@ command = new Commands.new("logs", ["log"], "logging", async (bot, args, msg) =>
       )
     );
   };
-  
+
   // Check for arguments
   const ArgsMatch = (args || "").match(/toggle|disable|enable|set|status/);
   
@@ -95,12 +95,16 @@ command = new Commands.new("logs", ["log"], "logging", async (bot, args, msg) =>
     case "toggle":
     case "disable":
     case "enable":
+
       // Check if logs are enabled
       const LoggingEnabled = guildConfig.loggingEnabled;
       if (args !== "toggle" && ((LoggingEnabled && args === "enable") || (!LoggingEnabled && args === "disable"))) {
         msg.channel.createMessage(AuthorPing + " Already ahead of you! Logs are " + args + "d.");
         break;
       };
+
+      // This might take a bit
+      bot.sendMessageTyping(msg.channel.id);
       
       // Enable logs
       var pool = await sql.connect(sqlConfig);
@@ -123,14 +127,19 @@ command = new Commands.new("logs", ["log"], "logging", async (bot, args, msg) =>
     
     case "set":
       
-      const LocationRegex = /--(channel) (<#(\d+)>|\d+)/g;
+      const LocationRegex = /(<#(\d+)>|\d+)/g;
       const LogChannelMatches = [...args.matchAll(LocationRegex)];
       
       // Verify that the channels exist
       var LogChannels = [];
+      if (!LogChannelMatches[0]) {
+        msg.channel.createMessage(AuthorPing + " You didn't mention any channel or ID.");
+        return;
+      };
+
       for (var i = 0; LogChannelMatches.length > i; i++) {
         
-        const LogChannelId = LogChannelMatches[i][2].includes("#") ? LogChannelMatches[i][3] : LogChannelMatches[i][2];
+        const LogChannelId = LogChannelMatches[i][1].includes("#") ? LogChannelMatches[i][2] : LogChannelMatches[i][1];
         const LogChannel = bot.getChannel(LogChannelId);
         
         if (!LogChannel) {
