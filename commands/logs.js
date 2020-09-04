@@ -43,7 +43,21 @@ async function getGuildConfig(guildId) {
 };
 
 var command;
-command = new Commands.new("logs", ["log"], "logging", async (bot, args, msg) => {
+command = new Commands.new("logs", ["log"], "logging", "Modify log settings", [
+  {
+    args: "",
+    description: "Get logging status for this guild"
+  }, {
+    args: "set <#channel or channel ID>",
+    description: "Send all longs to `<#channel>`"
+  }, {
+    args: "enable",
+    description: "Enable logging for this server",
+  }, {
+    args: "disable",
+    description: "Disable logging for this server"
+  }
+], async (bot, args, msg) => {
 
   // Check permissions
   if (!msg.member.permission.has("manageGuild")) {
