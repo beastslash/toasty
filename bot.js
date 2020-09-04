@@ -6,7 +6,7 @@ const Bot = new eris(process.env.DISCORD_TOKEN);
 const Commands = require("./commands");
 
 // Load important files
-const loadFolderNames = ["commands", "log-events"];
+const loadFolderNames = ["commands", "events"];
 
 for (var i = 0; loadFolderNames.length > i; i++) {
   
@@ -26,7 +26,7 @@ Commands.registerBot(Bot);
 
 // Listen to commands
 Bot.on("messageCreate", (msg) => {
-  
+
   const ServerPrefix = Commands.getPrefix(msg.channel.id);
   
   // Check if they just want the bot prefix
@@ -36,7 +36,7 @@ Bot.on("messageCreate", (msg) => {
     return;
   };
 
-  if (msg.content.substring(0, ServerPrefix.length) === ServerPrefix) {
+  if (!msg.author.bot && msg.author.id !== bot.user.id && msg.content.substring(0, ServerPrefix.length) === ServerPrefix) {
     if (msg.content.indexOf(" ") != -1) {
       var commandName = msg.content.substring(1, msg.content.indexOf(" "));
       var args = msg.content.substring(msg.content.indexOf(" ")+1);
