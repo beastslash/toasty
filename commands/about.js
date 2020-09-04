@@ -1,7 +1,7 @@
 const Commands = require("../commands");
 
 module.exports = function() {
-  new Commands.new("about", ["toasty", "info"], "about", (bot, args, msg) => {
+  new Commands.new("about", ["toasty", "info"], "about", "Learn more about the bot", [], (bot, args, msg) => {
     msg.channel.createMessage({
       content: "<@" + msg.author.id + ">",
       embed: {

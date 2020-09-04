@@ -1,8 +1,57 @@
 const Commands = require("../commands");
 
 module.exports = function() {
-  new Commands.new("help", ["commands", "cmds"], "about", (bot, args, msg) => {
+  new Commands.new("help", ["commands", "cmds"], "about", "Lists all commands of the bot, or presents info about a specific command.", [
+    {
+      args: "",
+      description: "List available commands"
+    }, {
+      args: "<command>",
+      description: "Get info about a specific command"
+    }
+  ], (bot, args, msg) => {
     
+    const AuthorPing = "<@" + msg.author.id + ">";
+
+    // Check if they want to know more about a specific command
+    if (args) {
+      
+      const Prefix = Commands.getPrefix();
+      const CommandName = args.includes(" ") ? args.substring(0, args.indexOf(" ")) : args;
+      const Command = Commands.get(CommandName);
+
+      if (!Command) {
+        msg.channel.createMessage("<@" + msg.author.id + "> Command `" + CommandName + "` doesn't exist.");
+        return;
+      };
+      
+      var fields = Command.examples ? [] : undefined;
+
+      for (var i = 0; fields ? Command.examples.length > i : 0; i++) {
+        const Example = Command.examples[i];
+        const Field = {
+          name: Example.description,
+          value: "`" + Prefix + CommandName + " " + Example.args + "`",
+          inline: true
+        };
+        fields.push(Field);
+      };
+
+      msg.channel.createMessage({
+        content: AuthorPing + " Information about `" + Prefix + CommandName + "`:", 
+        embed: {
+          title: Prefix + CommandName,
+          description: Command.description || "That's odd. There's no description available.",
+          fields: fields,
+          footer: Command.aliases && Command.aliases.length > 0 ? {
+            text: "Aliases: " + Command.aliases.join(", ")
+          } : undefined
+        }
+      });
+      return;
+
+    };
+
     // Prepare the help fields
     var helpFields = {}
     
@@ -61,7 +110,7 @@ module.exports = function() {
     
     // Show the fields
     msg.channel.createMessage({
-      content: "<@" + msg.author.id + "> Here are the list of commands you can run!",
+      content: AuthorPing + " Here are the list of commands you can run!",
       embed: {
         author: {
           name: "Toasty commands",

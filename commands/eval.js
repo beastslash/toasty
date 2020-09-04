@@ -41,7 +41,7 @@ function userAllowedToEval(bot, userId) {
 };
 
 module.exports = function() {
-  new Command.new("eval", ["evaluate"], (bot, args, msg) => {
+  new Command.new("eval", ["evaluate"], "dev", "A command for Makuwro staff to debug the bot.", undefined, (bot, args, msg) => {
     
     // Make sure they're allowed to eval
     if (!userAllowedToEval(bot, msg.author.id)) {
