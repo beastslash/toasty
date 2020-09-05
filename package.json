@@ -1,6 +1,6 @@
 {
   "name": "toasty",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Discord bot for managing messages across servers.",
   "main": "server.js",
   "scripts": {
