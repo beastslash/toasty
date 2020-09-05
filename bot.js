@@ -36,7 +36,7 @@ Bot.on("messageCreate", (msg) => {
     return;
   };
 
-  if (!msg.author.bot && msg.author.id !== bot.user.id && msg.content.substring(0, ServerPrefix.length) === ServerPrefix) {
+  if (!msg.author.bot && msg.author.id !== Bot.user.id && msg.content.substring(0, ServerPrefix.length) === ServerPrefix) {
     if (msg.content.indexOf(" ") != -1) {
       var commandName = msg.content.substring(1, msg.content.indexOf(" "));
       var args = msg.content.substring(msg.content.indexOf(" ")+1);

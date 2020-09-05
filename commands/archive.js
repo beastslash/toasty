@@ -43,25 +43,39 @@ async function getGuildConfig(guildId) {
   
 };
 
-const ArchiveCommand = new Command.new("archive", ["archives"], "archive");
+const ArchiveCommand = new Command.new("archive", ["archives"], "archive", "Archives a channel, or sets the default guild to send archives to.", [
+  {
+    args: "",
+    description: "Copy this channel's messages, and then send them to the default archive guild"
+  }, {
+    args: "set <guild id>",
+    description: "Set the default archive guild"
+  }, {
+    args: "--json",
+    description: "Copy this channel's messages, send them to the default archive guild, and turn them into a machine-readable JSON file"
+  }, {
+    args: "--no-channel --json", 
+    description: "Copy this channel's messages, but only create a machine-readable JSON file"
+  }
+]);
 ArchiveCommand.setAction(async (bot, args, msg) => {
 
   const GuildId = msg.channel.guild.id;
   const AuthorId = msg.author.id;
   var guildConfig = await getGuildConfig(GuildId);
 
-  if (args && args.toLowerCase().substring(0, 11) === "set --guild") {
+  if (args && args.toLowerCase().substring(0, 3) === "set") {
 
     // Get archive guild ID
-    const LocationRegex = /--(guild) (\d+)/gi;
+    const LocationRegex = /(\d+)/gi;
     const ArchiveGuildMatch = [...args.matchAll(LocationRegex)];
-    const ArchiveGuildId = ArchiveGuildMatch[0][2];
+    const ArchiveGuildId = ArchiveGuildMatch[0][1];
   
     if (!ArchiveGuildId) {
       msg.channel.createMessage({
         content: "<@" + msg.author.id + "> You didn't tell me a guild to send archives to!",
         embed: {
-          description: "**Valid usage:**\narchive set --guild **guildId**"
+          description: "**Valid usage:**\narchive set **guildId**"
         }
       });
 
