@@ -51,7 +51,7 @@ Bot.on("messageCreate", (msg) => {
       msg.channel.createMessage({
         content: AuthorPing + " Something bad happened! Please try again.",
         embed: {
-          description: "Please [submit this report to Makuwro](https://github.com/makuwro/toasty/issues) if this continues. \nThink you can help us fix this? [Shoot a pull request](https://github.com/makuwro/toasty/pulls) our way!",
+          description: "Please [submit this report to Beastslash](https://github.com/beastslash/toasty/issues) if this continues. \nThink you can help us fix this? [Shoot a pull request](https://github.com/beastslash/toasty/pulls) our way!",
           fields: [{
             name: "Error",
             value: err.name + ": " + err.message
